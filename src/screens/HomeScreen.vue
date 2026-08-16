@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Fit } from '@rive-app/canvas'
 import ResourceBar from '../components/ResourceBar.vue'
 import RiveCanvas from '../components/RiveCanvas.vue'
 import { useGameStore } from '../stores/game'
@@ -8,7 +9,12 @@ const game = useGameStore()
 
 <template>
   <section class="screen home-screen">
-    <RiveCanvas src="/rive/home.riv" state-machine="HomeSM">
+    <RiveCanvas
+      src="/rive/merge/merge_home.riv"
+      artboard="Home"
+      state-machine="HomeSM"
+      :fit="Fit.Cover"
+    >
       <div class="home-fallback">
         <header class="top-ui">
           <ResourceBar />
