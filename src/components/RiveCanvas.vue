@@ -2,7 +2,7 @@
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { Fit, Layout, Rive } from '@rive-app/canvas'
 
-export interface RiveLoadInfo {
+interface RiveLoadInfo {
   artboard: string
   stateMachines: string[]
   animations: string[]
