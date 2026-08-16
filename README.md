@@ -1,39 +1,36 @@
 # Merge
 
-A mobile-first merge game starter built with Vue 3, TypeScript, Pinia, Phaser 3 and Rive.
+A lightweight merge-game client built around **Rive + Phaser + TypeScript**.
 
 ## Architecture
 
-- **Vue 3**: screen composition, DOM shell and debug/fallback UI
-- **Pinia**: player resources, page flow and gameplay state
-- **Rive**: production UI/animation layer (`public/rive`)
-- **Phaser 3**: merge board and gameplay rendering
-- **Vite**: development/build toolchain
+- **Rive** owns Logo, Loading, Home, game HUD, animation, and UI presentation.
+- **Phaser** is created only for the merge-board gameplay layer.
+- **TypeScript** is the glue between Rive, loading/data, and Phaser.
+- **Vite** is only the development/build tool.
 
-## Screen flow
+Vue and Pinia are intentionally not used.
 
-`Logo -> Loading -> Home -> Game`
+## Boot flow
 
-## Run
+```text
+merge_logo.riv
+  -> merge_loading.riv
+  -> preload merge_home.riv
+  -> merge_home.riv
+```
+
+Rive assets live in `public/rive/merge/`.
+
+## Development
 
 ```bash
 npm install
 npm run dev
 ```
 
-For LAN/mobile testing, Vite is configured with `0.0.0.0`, so open the address printed by Vite from a device on the same network.
+Build validation:
 
-## Rive convention (first pass)
-
-| File | State machine | Responsibility |
-| --- | --- | --- |
-| `logo.riv` | `LogoSM` | logo entrance/outro |
-| `loading.riv` | `LoadingSM` | loading presentation |
-| `home.riv` | `HomeSM` | avatar/resources/store/mail/settings/tasks/start |
-| `game.riv` | `GameSM` | HUD/character/goal tray (reserved) |
-
-`src/components/RiveCanvas.vue` is the single bridge between Vue and Rive. Keep Rive runtime calls there instead of scattering them across pages.
-
-## Next integration step
-
-Export your Rive files to `public/rive/`, keep the state-machine names above, then bind Rive events / ViewModel values to Pinia actions and state.
+```bash
+npm run build
+```
