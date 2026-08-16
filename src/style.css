@@ -13,259 +13,39 @@ body,
 
 body {
   min-width: 320px;
-  background: #101d31;
-  color: #263a55;
-  font-family: Inter, ui-rounded, "SF Pro Rounded", "PingFang SC", system-ui, sans-serif;
+  background: #000;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
 }
 
-button {
-  border: 0;
-  font: inherit;
-  cursor: pointer;
-}
-
-.app-shell {
+.game-root {
+  position: relative;
   width: 100vw;
   height: 100dvh;
   overflow: hidden;
-  background: radial-gradient(circle at 50% 10%, #5d8fad 0%, #274763 46%, #15263e 100%);
+  background: #000;
 }
 
-.screen {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
-.fallback-center {
-  display: grid;
-  place-content: center;
-  justify-items: center;
-  width: 100%;
-  height: 100%;
-  gap: 18px;
-}
-
-.logo-mark {
-  padding: 18px 34px;
-  border: 7px solid #fff7df;
-  border-radius: 34px;
-  background: #f5bd4f;
-  color: #38506a;
-  box-shadow: 0 12px 0 #9a6f2e;
-  font-size: clamp(54px, 12vw, 118px);
-  font-weight: 1000;
-  letter-spacing: -0.07em;
-}
-
-.logo-subtitle {
-  color: rgba(255,255,255,.82);
-  font-weight: 800;
-}
-
-.loading-fallback {
-  align-content: end;
-  padding: 0 9vw 14vh;
-}
-
-.loading-title {
-  color: white;
-  font-size: 30px;
-  font-weight: 900;
-}
-
-.loading-track {
-  width: min(720px, 80vw);
-  height: 30px;
-  padding: 5px;
-  overflow: hidden;
-  border-radius: 20px;
-  background: rgba(14, 34, 57, .55);
-}
-
-.loading-fill {
-  height: 100%;
-  border-radius: 999px;
-  background: #f4c14d;
-  transition: width 80ms linear;
-}
-
-.loading-fallback strong { color: white; }
-
-.home-fallback,
-.game-screen {
+.rive-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
   width: 100%;
   height: 100%;
 }
-
-.home-fallback {
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  padding: max(20px, env(safe-area-inset-top)) 24px max(26px, env(safe-area-inset-bottom));
-  background:
-    linear-gradient(rgba(29,64,84,.08), rgba(29,64,84,.18)),
-    radial-gradient(circle at 52% 47%, #d6efc3 0 16%, transparent 17%),
-    linear-gradient(#8bc4d8 0 46%, #8dbf78 46% 100%);
-}
-
-.top-ui {
-  display: flex;
-  gap: 14px;
-  align-items: flex-start;
-}
-
-.top-ui > :first-child { flex: 1; }
-
-.side-actions {
-  display: grid;
-  gap: 10px;
-}
-
-.side-actions button,
-.home-button {
-  width: 58px;
-  height: 58px;
-  border: 3px solid rgba(255,255,255,.7);
-  border-radius: 18px;
-  background: #6ba6c2;
-  color: white;
-  box-shadow: 0 6px 0 rgba(28, 56, 79, .28);
-  font-size: 25px;
-  font-weight: 900;
-}
-
-.home-stage {
-  display: grid;
-  place-items: center;
-}
-
-.home-card {
-  width: min(620px, 78vw);
-  padding: 28px;
-  border: 5px solid rgba(255,255,255,.72);
-  border-radius: 34px;
-  background: rgba(255, 249, 225, .86);
-  box-shadow: 0 14px 30px rgba(36,58,63,.18);
-  text-align: center;
-}
-
-.home-card h1 { margin: 6px 0 10px; font-size: clamp(34px, 7vw, 64px); }
-.home-card p { margin: 0; font-weight: 700; }
-.eyebrow { color: #b87832; font-size: 13px; font-weight: 1000; letter-spacing: .12em; }
-
-.bottom-actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: end;
-  gap: 20px;
-}
-
-.primary-button,
-.secondary-button {
-  min-width: 170px;
-  min-height: 72px;
-  padding: 0 28px;
-  border: 5px solid rgba(255,255,255,.72);
-  border-radius: 28px;
-  color: white;
-  box-shadow: 0 8px 0 rgba(43, 69, 53, .32);
-  font-size: 22px;
-  font-weight: 1000;
-}
-
-.primary-button { background: #68aa5d; }
-.secondary-button { background: #e6a84c; }
-
-.game-screen {
-  display: grid;
-  grid-template-rows: auto minmax(170px, 24vh) 1fr;
-  gap: 12px;
-  padding: max(18px, env(safe-area-inset-top)) 18px max(12px, env(safe-area-inset-bottom));
-  background: linear-gradient(#83b9cf 0 28%, #d9bd8b 28% 100%);
-}
-
-.game-top {
-  display: flex;
-  gap: 12px;
-}
-
-.game-top > :first-child { flex: 1; }
-
-.character-stage {
-  display: flex;
-  align-items: end;
-  justify-content: center;
-  gap: 18px;
-}
-
-.character-bust {
-  display: grid;
-  place-items: center;
-  width: min(190px, 22vw);
-  aspect-ratio: .82;
-  border: 5px solid rgba(255,255,255,.65);
-  border-radius: 50% 50% 24px 24px;
-  background: #d98270;
-  color: white;
-  font-weight: 1000;
-}
-
-.goal-tray {
-  display: flex;
-  gap: 10px;
-  padding: 14px;
-  border: 5px solid rgba(255,255,255,.62);
-  border-radius: 26px;
-  background: rgba(112, 73, 43, .78);
-}
-
-.goal-item {
-  display: grid;
-  place-items: center;
-  width: clamp(82px, 11vw, 120px);
-  aspect-ratio: 1;
-  padding: 8px;
-  border-radius: 20px;
-  background: #fff2d3;
-  font-size: 12px;
-}
-
-.goal-item strong { font-size: 16px; }
-.goal-item small { opacity: .65; }
 
 .phaser-host {
-  width: 100%;
-  min-height: 0;
+  position: absolute;
+  left: 3%;
+  right: 3%;
+  bottom: max(2%, env(safe-area-inset-bottom));
+  height: 54%;
   overflow: hidden;
-  border: 6px solid rgba(255,255,255,.7);
-  border-radius: 34px;
-  background: rgba(122, 80, 47, .58);
-  box-shadow: inset 0 0 0 6px rgba(79,48,31,.12);
+  pointer-events: auto;
 }
 
 .phaser-host canvas {
   display: block;
-  max-width: 100%;
-  max-height: 100%;
-}
-
-.screen-fade-enter-active,
-.screen-fade-leave-active {
-  transition: opacity 180ms ease;
-}
-
-.screen-fade-enter-from,
-.screen-fade-leave-to {
-  opacity: 0;
-}
-
-@media (min-aspect-ratio: 3 / 4) {
-  .home-fallback,
-  .game-screen {
-    width: min(100%, 860px);
-    margin: 0 auto;
-  }
+  width: 100% !important;
+  height: 100% !important;
 }
