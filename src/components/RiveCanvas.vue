@@ -2,6 +2,12 @@
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { Fit, Layout, Rive } from '@rive-app/canvas'
 
+export interface RiveLoadInfo {
+  artboard: string
+  stateMachines: string[]
+  animations: string[]
+}
+
 const props = withDefaults(
   defineProps<{
     src: string
@@ -17,8 +23,9 @@ const props = withDefaults(
 )
 
 const emit = defineEmits<{
-  load: []
+  load: [info: RiveLoadInfo]
   error: [error: unknown]
+  stateChange: [states: string[]]
 }>()
 
 const canvas = ref<HTMLCanvasElement | null>(null)
@@ -53,11 +60,30 @@ function create() {
     onLoad: () => {
       ready.value = true
       resize()
-      emit('load')
+
+      const info: RiveLoadInfo = {
+        artboard: rive?.activeArtboard ?? '',
+        stateMachines: [...(rive?.stateMachineNames ?? [])],
+        animations: [...(rive?.animationNames ?? [])],
+      }
+
+      if (props.stateMachine && !info.stateMachines.includes(props.stateMachine)) {
+        console.warn(
+          `[RiveCanvas] State machine "${props.stateMachine}" was not found in ${props.src}. Available: ${info.stateMachines.join(', ') || 'none'}`,
+        )
+      }
+
+      emit('load', info)
     },
     onLoadError: (error) => {
       ready.value = false
       emit('error', error)
+    },
+    onStateChange: (event) => {
+      const states = Array.isArray(event.data)
+        ? event.data.filter((item): item is string => typeof item === 'string')
+        : []
+      emit('stateChange', states)
     },
   })
 
@@ -93,7 +119,7 @@ defineExpose({ fireTrigger, setBoolean, setNumber, resize })
 
 onMounted(create)
 onBeforeUnmount(destroy)
-watch(() => [props.src, props.artboard, props.stateMachine], create)
+watch(() => [props.src, props.artboard, props.stateMachine, props.fit], create)
 </script>
 
 <template>
