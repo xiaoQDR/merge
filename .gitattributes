@@ -1,0 +1,2 @@
+# Rive exports are binary assets. Do not attempt text diffs or text merges.
+*.riv binary
