@@ -1,6 +1,7 @@
 $ErrorActionPreference = 'Stop'
 
 Set-Location $PSScriptRoot
+$scriptFailed = $false
 
 function Invoke-Git {
     param(
@@ -26,7 +27,7 @@ try {
     }
 
     if (-not (Test-Path '.git')) {
-        throw "This script must stay in the root of the merge Git repository."
+        throw 'This script must stay in the root of the merge Git repository.'
     }
 
     if (-not (Test-Path 'public/rive')) {
@@ -100,6 +101,7 @@ try {
     Write-Host "Commit: $message" -ForegroundColor Green
 }
 catch {
+    $scriptFailed = $true
     Write-Host ''
     Write-Host 'Rive sync failed:' -ForegroundColor Red
     Write-Host $_.Exception.Message -ForegroundColor Red
@@ -107,3 +109,9 @@ catch {
 }
 
 Read-Host 'Press Enter to close'
+
+if ($scriptFailed) {
+    exit 1
+}
+
+exit 0
