@@ -24,17 +24,14 @@ jobs:
           ref: main
           path: merge
 
-      - name: Checkout mergegr
-        uses: actions/checkout@v4
-        with:
-          repository: xiaoQDR/mergegr
-          ref: main
-          path: mergegr
+      - name: Clone mergegr and copy Rive asset
+        run: |
+          git clone --depth 1 https://github.com/xiaoQDR/mergegr.git mergegr
+          cp mergegr/assets/rive/merge_home.riv merge/public/rive/merge/merge_home.riv
 
-      - name: Copy and commit merge_home.riv
+      - name: Commit synced asset
         working-directory: merge
         run: |
-          cp ../mergegr/assets/rive/merge_home.riv public/rive/merge/merge_home.riv
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add public/rive/merge/merge_home.riv
