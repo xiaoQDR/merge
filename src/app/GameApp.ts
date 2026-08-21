@@ -1,4 +1,4 @@
-import { Fit } from '@rive-app/canvas'
+import { Fit } from '@rive-app/canvas-single'
 import type Phaser from 'phaser'
 import { createMergeGame } from '../game/createGame'
 import { RiveScreen } from '../rive/RiveScreen'
