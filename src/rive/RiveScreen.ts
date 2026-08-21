@@ -2,6 +2,7 @@ import { Alignment, Fit, Layout, Rive } from '@rive-app/canvas-single'
 
 export interface RiveScreenConfig {
   src: string
+  artboard?: string
   stateMachine?: string
   fit?: Fit
   onStateChange?: (states: string[]) => void
@@ -38,6 +39,7 @@ export class RiveScreen {
       instance = new Rive({
         src: config.src,
         canvas: this.canvas,
+        artboard: config.artboard,
         autoplay: true,
         autoBind: true,
         stateMachines: config.stateMachine,
