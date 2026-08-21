@@ -1,3 +1,0 @@
-commit=e572d4137711359ce0f7137db1a758405b12617c
-build=success
-deploy=success
