@@ -3,10 +3,12 @@ name: Deploy Web
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
@@ -15,37 +17,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  sync_asset:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout merge
-        uses: actions/checkout@v4
-        with:
-          ref: main
-          path: merge
-
-      - name: Clone mergegr and copy Rive asset
-        run: |
-          git clone --depth 1 https://github.com/xiaoQDR/mergegr.git mergegr
-          cp mergegr/assets/rive/merge_home.riv merge/public/rive/merge/merge_home.riv
-
-      - name: Commit synced asset
-        working-directory: merge
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add public/rive/merge/merge_home.riv
-          git diff --cached --quiet && exit 0
-          git commit -m 'chore: sync merge_home.riv from mergegr [skip ci]'
-          git push
-
   build:
-    needs: sync_asset
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: main
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -57,6 +32,7 @@ jobs:
           path: ./dist
 
   deploy:
+    if: github.event_name != 'pull_request'
     needs: build
     runs-on: ubuntu-latest
     environment:
@@ -66,24 +42,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
-  report:
-    if: always()
-    needs: [sync_asset, build, deploy]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: main
-      - name: Record sync result
-        env:
-          SYNC_RESULT: ${{ needs.sync_asset.result }}
-          BUILD_RESULT: ${{ needs.build.result }}
-          DEPLOY_RESULT: ${{ needs.deploy.result }}
-        run: |
-          printf 'sync=%s\nbuild=%s\ndeploy=%s\n' "$SYNC_RESULT" "$BUILD_RESULT" "$DEPLOY_RESULT" > .github/merge-home-sync-status.txt
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add .github/merge-home-sync-status.txt
-          git diff --cached --quiet || git commit -m 'chore: record merge_home sync status [skip ci]'
-          git push
