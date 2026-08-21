@@ -1,3 +1,0 @@
-sync=failure
-build=skipped
-deploy=skipped
