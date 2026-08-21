@@ -10,7 +10,7 @@ const RIVE = {
   game: assetUrl('rive/merge/merge_game.riv'),
 } as const
 
-type AppStage = 'boot' | 'home' | 'game'
+type AppStage = 'boot' | 'main' | 'game'
 
 export class GameApp {
   private stage: AppStage = 'boot'
@@ -23,22 +23,22 @@ export class GameApp {
   }
 
   async start() {
-    await this.showHome()
+    await this.showMain()
   }
 
-  private async showHome() {
-    this.stage = 'home'
+  private async showMain() {
+    this.stage = 'main'
 
     try {
       await this.rive.show({
         src: RIVE.home,
-        artboard: 'Home',
-        stateMachine: 'homeSM',
+        artboard: 'main',
+        stateMachine: 'mainSM',
         fit: Fit.Cover,
       })
     }
     catch (error) {
-      console.error('[Merge] Home Rive failed to load.', error)
+      console.error('[Merge] Main Rive failed to load.', error)
     }
   }
 
