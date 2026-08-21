@@ -2,6 +2,10 @@
 
 A lightweight merge-game client built around **Rive + Phaser + TypeScript**.
 
+## Live Web
+
+GitHub Pages: https://xiaoqdr.github.io/merge/
+
 ## Architecture
 
 - **Rive** owns Logo, Loading, Home, game HUD, animation, and UI presentation.
