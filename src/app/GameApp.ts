@@ -3,11 +3,13 @@ import type Phaser from 'phaser'
 import { createMergeGame } from '../game/createGame'
 import { RiveScreen } from '../rive/RiveScreen'
 
+const assetUrl = (path: string) => `${import.meta.env.BASE_URL}${path.replace(/^\/+/, '')}`
+
 const RIVE = {
-  logo: '/rive/merge/merge_logo.riv',
-  loading: '/rive/merge/merge_loading.riv',
-  home: '/rive/merge/merge_home.riv',
-  game: '/rive/merge/merge_game.riv',
+  logo: assetUrl('rive/merge/merge_logo.riv'),
+  loading: assetUrl('rive/merge/merge_loading.riv'),
+  home: assetUrl('rive/merge/merge_home.riv'),
+  game: assetUrl('rive/merge/merge_game.riv'),
 } as const
 
 type AppStage = 'boot' | 'logo' | 'loading' | 'home' | 'game'
