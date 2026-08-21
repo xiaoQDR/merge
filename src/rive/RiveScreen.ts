@@ -1,4 +1,4 @@
-import { Alignment, Fit, Layout, Rive } from '@rive-app/canvas'
+import { Alignment, Fit, Layout, Rive } from '@rive-app/canvas-single'
 
 export interface RiveScreenConfig {
   src: string
