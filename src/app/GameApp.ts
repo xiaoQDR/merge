@@ -32,6 +32,7 @@ export class GameApp {
     try {
       await this.rive.show({
         src: RIVE.home,
+        artboard: 'Home',
         stateMachine: 'homeSM',
         fit: Fit.Cover,
       })
@@ -51,6 +52,7 @@ export class GameApp {
     try {
       await this.rive.show({
         src: RIVE.game,
+        artboard: 'Game',
         stateMachine: 'GameSM',
         fit: Fit.Cover,
       })
