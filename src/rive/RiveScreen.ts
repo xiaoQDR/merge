@@ -70,6 +70,7 @@ export class RiveScreen {
             const name = data.name
             if (typeof name !== 'string') return
 
+            console.info(`[Merge] Rive event from ${config.src}: ${name}`)
             config.onRiveEvent?.(name)
           })
 
@@ -86,11 +87,27 @@ export class RiveScreen {
 
             if (stateMachine) {
               this.stateMachine = stateMachine
-              instance.play(stateMachine)
+              console.info(
+                `[Merge] Starting Rive state machine "${stateMachine}" from ${config.src}.`,
+              )
+
+              // A state machine must be instantiated as a state machine. Calling
+              // play(name) alone is not enough when the Rive was initially loaded
+              // without the stateMachines parameter.
+              instance.reset({
+                artboard: config.artboard,
+                stateMachines: stateMachine,
+                autoplay: true,
+                autoBind: true,
+              })
+              this.resize()
             }
             else {
               const animation = instance.animationNames[0]
               if (animation) {
+                console.warn(
+                  `[Merge] No state machine found in ${config.src}; falling back to animation "${animation}".`,
+                )
                 instance.play(animation)
               }
               else {
