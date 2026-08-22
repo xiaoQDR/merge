@@ -10,7 +10,9 @@ const RIVE = {
   game: assetUrl('rive/merge/merge_game.riv'),
 } as const
 
-type AppStage = 'boot' | 'main' | 'game'
+const HOME_REFERENCE_WIDTH = 1080
+
+type AppStage = 'boot' | 'home' | 'game'
 
 export class GameApp {
   private stage: AppStage = 'boot'
@@ -39,16 +41,18 @@ export class GameApp {
   }
 
   async start() {
-    await this.showMain()
+    await this.showHome()
   }
 
-  private async showMain() {
-    this.stage = 'main'
+  private async showHome() {
+    this.stage = 'home'
 
     try {
       await this.rive.show({
         src: RIVE.home,
+        artboard: 'Home',
         fit: Fit.Layout,
+        referenceWidth: HOME_REFERENCE_WIDTH,
       })
     }
     catch (error) {
