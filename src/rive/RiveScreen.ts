@@ -86,6 +86,11 @@ export class RiveScreen {
     })
   }
 
+  getLayoutScaleFactor() {
+    if (!this.activeConfig) return undefined
+    return this.calculateLayoutScaleFactor(this.activeConfig)
+  }
+
   setNumber(names: string | string[], value: number) {
     if (!this.rive || !this.stateMachine) return false
 
@@ -145,21 +150,24 @@ export class RiveScreen {
     window.removeEventListener('resize', this.resize)
   }
 
-  private createLayout(config: RiveScreenConfig) {
+  private calculateLayoutScaleFactor(config: RiveScreenConfig) {
     const fit = config.fit ?? Fit.Cover
-    let layoutScaleFactor: number | undefined
 
     if (fit === Fit.Layout && config.referenceWidth) {
       const hostWidth = this.host.clientWidth
       if (hostWidth > 0) {
-        layoutScaleFactor = Math.min(hostWidth / config.referenceWidth, 1)
+        return Math.min(hostWidth / config.referenceWidth, 1)
       }
     }
 
+    return undefined
+  }
+
+  private createLayout(config: RiveScreenConfig) {
     return new Layout({
-      fit,
+      fit: config.fit ?? Fit.Cover,
       alignment: Alignment.Center,
-      layoutScaleFactor,
+      layoutScaleFactor: this.calculateLayoutScaleFactor(config),
     })
   }
 
