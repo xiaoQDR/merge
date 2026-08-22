@@ -24,7 +24,9 @@ export class GameApp {
     const viewport = window.visualViewport
     const width = Math.round(viewport?.width ?? window.innerWidth)
     const height = Math.round(viewport?.height ?? window.innerHeight)
-    this.resolutionLabel.textContent = `${width} × ${height}`
+    const scale = this.rive.getLayoutScaleFactor()
+    const scaleText = scale === undefined ? '--' : scale.toFixed(3)
+    this.resolutionLabel.textContent = `${width} × ${height}   Scale ${scaleText}`
   }
 
   constructor(private readonly root: HTMLElement) {
@@ -32,7 +34,7 @@ export class GameApp {
     this.rive = new RiveScreen(root)
 
     this.resolutionLabel.className = 'resolution-overlay'
-    this.resolutionLabel.setAttribute('aria-label', 'Current screen resolution')
+    this.resolutionLabel.setAttribute('aria-label', 'Current screen resolution and Rive layout scale')
     this.root.append(this.resolutionLabel)
 
     this.updateResolution()
@@ -54,6 +56,7 @@ export class GameApp {
         fit: Fit.Layout,
         referenceWidth: HOME_REFERENCE_WIDTH,
       })
+      this.updateResolution()
     }
     catch (error) {
       console.error('[Merge] Home Rive failed to load.', error)
@@ -74,6 +77,7 @@ export class GameApp {
         stateMachine: 'GameSM',
         fit: Fit.Layout,
       })
+      this.updateResolution()
     }
     catch (error) {
       console.error('[Merge] Game Rive failed to load.', error)
