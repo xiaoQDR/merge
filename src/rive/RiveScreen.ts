@@ -152,7 +152,7 @@ export class RiveScreen {
     if (fit === Fit.Layout && config.referenceWidth) {
       const hostWidth = this.host.clientWidth
       if (hostWidth > 0) {
-        layoutScaleFactor = hostWidth / config.referenceWidth
+        layoutScaleFactor = Math.min(hostWidth / config.referenceWidth, 1)
       }
     }
 
