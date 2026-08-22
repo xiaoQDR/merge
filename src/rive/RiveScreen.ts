@@ -6,6 +6,7 @@ export interface RiveScreenConfig {
   stateMachine?: string
   fit?: Fit
   referenceWidth?: number
+  referenceHeight?: number
   onStateChange?: (states: string[]) => void
 }
 
@@ -153,11 +154,18 @@ export class RiveScreen {
   private calculateLayoutScaleFactor(config: RiveScreenConfig) {
     const fit = config.fit ?? Fit.Cover
 
-    if (fit === Fit.Layout && config.referenceWidth) {
-      const hostWidth = this.host.clientWidth
-      if (hostWidth > 0) {
-        return Math.min(hostWidth / config.referenceWidth, 1)
-      }
+    if (fit !== Fit.Layout) return undefined
+
+    const hostWidth = this.host.clientWidth
+    const hostHeight = this.host.clientHeight
+    if (hostWidth <= 0 || hostHeight <= 0) return undefined
+
+    if (hostHeight > hostWidth && config.referenceHeight) {
+      return Math.min(hostHeight / config.referenceHeight, 1)
+    }
+
+    if (hostWidth >= hostHeight && config.referenceWidth) {
+      return Math.min(hostWidth / config.referenceWidth, 1)
     }
 
     return undefined
