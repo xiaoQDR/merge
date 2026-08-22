@@ -15,11 +15,27 @@ type AppStage = 'boot' | 'main' | 'game'
 export class GameApp {
   private stage: AppStage = 'boot'
   private readonly rive: RiveScreen
+  private readonly resolutionLabel = document.createElement('div')
   private phaser: Phaser.Game | null = null
+
+  private readonly updateResolution = () => {
+    const viewport = window.visualViewport
+    const width = Math.round(viewport?.width ?? window.innerWidth)
+    const height = Math.round(viewport?.height ?? window.innerHeight)
+    this.resolutionLabel.textContent = `${width} × ${height}`
+  }
 
   constructor(private readonly root: HTMLElement) {
     this.root.className = 'game-root'
     this.rive = new RiveScreen(root)
+
+    this.resolutionLabel.className = 'resolution-overlay'
+    this.resolutionLabel.setAttribute('aria-label', 'Current screen resolution')
+    this.root.append(this.resolutionLabel)
+
+    this.updateResolution()
+    window.addEventListener('resize', this.updateResolution)
+    window.visualViewport?.addEventListener('resize', this.updateResolution)
   }
 
   async start() {
