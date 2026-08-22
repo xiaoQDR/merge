@@ -11,7 +11,6 @@ const RIVE = {
 } as const
 
 const HOME_REFERENCE_WIDTH = 1080
-const HOME_REFERENCE_HEIGHT = 2070
 
 type AppStage = 'boot' | 'home' | 'game'
 
@@ -54,7 +53,6 @@ export class GameApp {
         artboard: 'Home',
         fit: Fit.Layout,
         referenceWidth: HOME_REFERENCE_WIDTH,
-        referenceHeight: HOME_REFERENCE_HEIGHT,
       })
     }
     catch (error) {
