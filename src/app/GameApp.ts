@@ -48,13 +48,11 @@ export class GameApp {
     try {
       await this.rive.show({
         src: RIVE.home,
-        artboard: 'main',
-        stateMachine: 'mainSM',
-        fit: Fit.FitWidth,
+        fit: Fit.Layout,
       })
     }
     catch (error) {
-      console.error('[Merge] Main Rive failed to load.', error)
+      console.error('[Merge] Home Rive failed to load.', error)
     }
   }
 
