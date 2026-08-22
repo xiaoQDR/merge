@@ -5,6 +5,7 @@ export interface RiveScreenConfig {
   artboard?: string
   stateMachine?: string
   fit?: Fit
+  referenceWidth?: number
   onStateChange?: (states: string[]) => void
 }
 
@@ -13,10 +14,17 @@ export class RiveScreen {
   private readonly observer: ResizeObserver
   private rive: Rive | null = null
   private stateMachine: string | undefined
+  private activeConfig: RiveScreenConfig | null = null
   private loadToken = 0
 
   private readonly resize = () => {
-    this.rive?.resizeDrawingSurfaceToCanvas()
+    if (!this.rive) return
+
+    if (this.activeConfig) {
+      this.rive.layout = this.createLayout(this.activeConfig)
+    }
+
+    this.rive.resizeDrawingSurfaceToCanvas()
   }
 
   constructor(private readonly host: HTMLElement) {
@@ -31,6 +39,7 @@ export class RiveScreen {
   async show(config: RiveScreenConfig) {
     const token = ++this.loadToken
     this.cleanupRuntime()
+    this.activeConfig = config
     this.stateMachine = config.stateMachine
 
     await new Promise<void>((resolve, reject) => {
@@ -43,10 +52,7 @@ export class RiveScreen {
         autoplay: true,
         autoBind: true,
         stateMachines: config.stateMachine,
-        layout: new Layout({
-          fit: config.fit ?? Fit.Cover,
-          alignment: Alignment.Center,
-        }),
+        layout: this.createLayout(config),
         onLoad: () => {
           if (token !== this.loadToken) return
           this.rive = instance
@@ -134,8 +140,27 @@ export class RiveScreen {
   destroy() {
     ++this.loadToken
     this.cleanupRuntime()
+    this.activeConfig = null
     this.observer.disconnect()
     window.removeEventListener('resize', this.resize)
+  }
+
+  private createLayout(config: RiveScreenConfig) {
+    const fit = config.fit ?? Fit.Cover
+    let layoutScaleFactor: number | undefined
+
+    if (fit === Fit.Layout && config.referenceWidth) {
+      const hostWidth = this.host.clientWidth
+      if (hostWidth > 0) {
+        layoutScaleFactor = hostWidth / config.referenceWidth
+      }
+    }
+
+    return new Layout({
+      fit,
+      alignment: Alignment.Center,
+      layoutScaleFactor,
+    })
   }
 
   private cleanupRuntime() {
