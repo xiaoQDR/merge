@@ -1,13 +1,15 @@
-import { Alignment, Fit, Layout, Rive } from '@rive-app/canvas-single'
+import { Alignment, EventType, Fit, Layout, Rive } from '@rive-app/canvas-single'
 
 export interface RiveScreenConfig {
   src: string
   artboard?: string
   stateMachine?: string
+  autoStateMachine?: boolean
   fit?: Fit
   referenceWidth?: number
   referenceHeight?: number
   onStateChange?: (states: string[]) => void
+  onRiveEvent?: (name: string) => void
 }
 
 export class RiveScreen {
@@ -50,7 +52,7 @@ export class RiveScreen {
         src: config.src,
         canvas: this.canvas,
         artboard: config.artboard,
-        autoplay: true,
+        autoplay: config.autoStateMachine ? false : true,
         autoBind: true,
         stateMachines: config.stateMachine,
         layout: this.createLayout(config),
@@ -59,12 +61,42 @@ export class RiveScreen {
           this.rive = instance
           this.resize()
 
+          instance.on(EventType.RiveEvent, (event) => {
+            if (token !== this.loadToken) return
+
+            const data = event.data
+            if (typeof data !== 'object' || data === null || !('name' in data)) return
+
+            const name = data.name
+            if (typeof name !== 'string') return
+
+            config.onRiveEvent?.(name)
+          })
+
           if (config.stateMachine && !instance.stateMachineNames.includes(config.stateMachine)) {
             console.warn(
               `[Merge] State machine "${config.stateMachine}" was not found in ${config.src}.`,
               'Available:',
               instance.stateMachineNames,
             )
+          }
+
+          if (config.autoStateMachine) {
+            const stateMachine = instance.stateMachineNames[0]
+
+            if (stateMachine) {
+              this.stateMachine = stateMachine
+              instance.play(stateMachine)
+            }
+            else {
+              const animation = instance.animationNames[0]
+              if (animation) {
+                instance.play(animation)
+              }
+              else {
+                console.warn(`[Merge] No state machine or animation was found in ${config.src}.`)
+              }
+            }
           }
 
           resolve()

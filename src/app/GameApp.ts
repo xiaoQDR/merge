@@ -6,14 +6,17 @@ import { RiveScreen } from '../rive/RiveScreen'
 const assetUrl = (path: string) => `${import.meta.env.BASE_URL}${path.replace(/^\/+/, '')}`
 
 const RIVE = {
+  logo: assetUrl('rive/merge/merge_logo.riv'),
+  loading: assetUrl('rive/merge/merge_loading.riv'),
   home: assetUrl('rive/merge/merge_home.riv'),
   game: assetUrl('rive/merge/merge_game.riv'),
 } as const
 
 const HOME_REFERENCE_WIDTH = 1080
 const HOME_REFERENCE_HEIGHT = 2070
+const FADE_OUT_EVENT = 'fadeOut'
 
-type AppStage = 'boot' | 'home' | 'game'
+type AppStage = 'boot' | 'logo' | 'loading' | 'home' | 'game'
 
 export class GameApp {
   private stage: AppStage = 'boot'
@@ -44,10 +47,61 @@ export class GameApp {
   }
 
   async start() {
-    await this.showHome()
+    void this.preloadRive(RIVE.loading)
+    void this.preloadRive(RIVE.home)
+    await this.showLogo()
+  }
+
+  private async showLogo() {
+    if (this.stage !== 'boot') return
+    this.stage = 'logo'
+
+    try {
+      await this.rive.show({
+        src: RIVE.logo,
+        autoStateMachine: true,
+        fit: Fit.Cover,
+        onRiveEvent: (name) => {
+          console.info(`[Merge] Logo Rive event: ${name}`)
+          if (name === FADE_OUT_EVENT && this.stage === 'logo') {
+            void this.showLoading()
+          }
+        },
+      })
+      this.updateResolution()
+    }
+    catch (error) {
+      console.error('[Merge] Logo Rive failed to load.', error)
+      void this.showLoading()
+    }
+  }
+
+  private async showLoading() {
+    if (this.stage !== 'logo') return
+    this.stage = 'loading'
+
+    try {
+      await this.rive.show({
+        src: RIVE.loading,
+        autoStateMachine: true,
+        fit: Fit.Cover,
+        onRiveEvent: (name) => {
+          console.info(`[Merge] Loading Rive event: ${name}`)
+          if (name === FADE_OUT_EVENT && this.stage === 'loading') {
+            void this.showHome()
+          }
+        },
+      })
+      this.updateResolution()
+    }
+    catch (error) {
+      console.error('[Merge] Loading Rive failed to load.', error)
+      void this.showHome()
+    }
   }
 
   private async showHome() {
+    if (this.stage !== 'loading') return
     this.stage = 'home'
 
     try {
@@ -89,5 +143,16 @@ export class GameApp {
     board.className = 'phaser-host'
     this.root.append(board)
     this.phaser = createMergeGame(board)
+  }
+
+  private async preloadRive(src: string) {
+    try {
+      const response = await fetch(src, { cache: 'force-cache' })
+      if (!response.ok) return
+      await response.arrayBuffer()
+    }
+    catch {
+      // RiveScreen will report a real load error if this asset is unavailable.
+    }
   }
 }
