@@ -70,7 +70,7 @@ export class GameApp {
         src: RIVE.game,
         artboard: 'Game',
         stateMachine: 'GameSM',
-        fit: Fit.Cover,
+        fit: Fit.Fill,
       })
     }
     catch (error) {
