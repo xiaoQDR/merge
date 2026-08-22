@@ -50,7 +50,7 @@ export class GameApp {
         src: RIVE.home,
         artboard: 'main',
         stateMachine: 'mainSM',
-        fit: Fit.ScaleDown,
+        fit: Fit.FitWidth,
       })
     }
     catch (error) {
