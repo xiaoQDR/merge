@@ -29,6 +29,7 @@ body {
 .rive-canvas {
   position: absolute;
   inset: 0;
+  z-index: 0;
   display: block;
   width: 100%;
   height: 100%;
@@ -39,6 +40,7 @@ body {
   left: 3%;
   right: 3%;
   bottom: max(2%, env(safe-area-inset-bottom));
+  z-index: 1;
   height: 54%;
   overflow: hidden;
   pointer-events: auto;
@@ -48,4 +50,19 @@ body {
   display: block;
   width: 100% !important;
   height: 100% !important;
+}
+
+.resolution-overlay {
+  position: absolute;
+  top: max(8px, env(safe-area-inset-top));
+  left: 50%;
+  z-index: 2147483647;
+  transform: translateX(-50%);
+  padding: 4px 9px;
+  border-radius: 6px;
+  background: rgb(0 0 0 / 72%);
+  color: #fff;
+  font: 600 13px/1.2 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  white-space: nowrap;
+  pointer-events: none;
 }
